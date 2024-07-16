@@ -10,16 +10,6 @@ class HomePageTest(TestCase) :
         # Verifico si la plantilla usada es la de home.html
         self.assertTemplateUsed(response, "home.html")
 
-    def test_displays_all_list_items(self) :
-        # Hago en el objeto Item insert del siguiente texto
-        Item.objects.create(text="itemey 1")
-        Item.objects.create(text="itemey 2")
-        response = self.client.get("/")
-        # Compruebo con el metodo GET que se han añadido
-        self.assertContains(response, "itemey 1")
-        self.assertContains(response, "itemey 2")
-
-
     def test_can_save_a_POST_request(self) :
         self.client.post("/", data={"item_text": "A new list item"})
         self.assertEqual(Item.objects.count(), 1)
@@ -29,13 +19,27 @@ class HomePageTest(TestCase) :
     def test_redirects_after_POST(self) :
         # Simulo una solicitud POST que guardo en la variable respuesta
         response = self.client.post("/", data={"item_text": "A new list item"})
-        self.assertRedirects(response, "/")  # Redirecciono la respuesta a la URL raiz
+        self.assertRedirects(response, "/lists/the-only-list-in-the-world/")  # Redirecciono la respuesta a la URL raiz
 
     def test_only_saves_items_when_necessary(self) :
         self.client.get("/")  # Obtengo datos con metodo GET 
         # Me aseguro q como resultado del GET no se guarda ninguna instancia de Item en el servior
         self.assertEqual(Item.objects.count(), 0)  
 
+
+class ListViewTests(TestCase) :
+    def test_uses_list_templates(self) :
+        response = self.client.get("/lists/the-only-list-in-the-world/")
+        self.assertTemplateUsed(response, "list.html")
+
+    def test_displays_all_list_items(self) :
+        # Hago en el objeto Item insert del siguiente texto
+        Item.objects.create(text="itemey 1")
+        Item.objects.create(text="itemey 2")
+        response = self.client.get("/lists/the-only-list-in-the-world/")
+        # Compruebo con el metodo GET que se han añadido
+        self.assertContains(response, "itemey 1")
+        self.assertContains(response, "itemey 2")
 
 class ItemModelTest(TestCase) :
     def test_saving_and_retrieving_items(self) :
