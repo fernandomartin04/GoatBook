@@ -36,9 +36,15 @@ class NewVisitorTest(StaticLiveServerTestCase) :
                 time.sleep(0.5)
 
     def check_for_row_in_list_table(self, row_text) :
+        time.sleep(1)
         table = self.browser.find_element(By.ID, "id_list_table")
         rows = table.find_elements(By.TAG_NAME, "tr")
-        self.assertIn(row_text, [row.text for row in rows])
+        row_text_list = [row.text for row in rows]
+        # print(len(rows))
+        # print(self.browser.page_source)
+        # import pdb
+        # pdb.set_trace()
+        self.assertIn(row_text, row_text_list)
 
     def test_can_start_a_todo_list(self) :
         # Edith has heard about a cool new online to-do app.
@@ -127,6 +133,7 @@ class NewVisitorTest(StaticLiveServerTestCase) :
         #Satisfied, they both go back to sleep
 
     def test_layout_and_styling(self):
+        
         # Edith goes to the home page,
         self.browser.get(self.live_server_url)
 
