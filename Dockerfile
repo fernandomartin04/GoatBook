@@ -19,4 +19,4 @@ ARG DJANGO_ALLOWED_HOST
 RUN python manage.py collectstatic --noinput
 RUN python manage.py migrate --noinput
 
-CMD ["gunicorn", "superlists.wsgi:application"]
+CMD gunicorn --bind :8888 superlists.wsgi:application
