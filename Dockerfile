@@ -7,15 +7,16 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY src /src
-RUN chmod 777 /src
 
 WORKDIR /src
 
-RUN python manage.py collectstatic --noinput
-
 ENV DJANGO_DEBUG_FALSE=1
-CMD gunicorn --bind :8888 superlists.wsgi:application
 
-RUN addgroup --system nonroot && adduser --system --group nonroot
+# Read Railway environment variables
+ARG DJANGO_SECRET_KEY
+ARG DJANGO_ALLOWED_HOST
 
-USER nonroot
+RUN python manage.py collectstatic
+RUN python manage.py migrate --noinput
+
+CMD ["gunicorn", "superlists.wsgi:application"]
